@@ -362,6 +362,89 @@ export interface AdminTransferTokenPermission extends Schema.CollectionType {
   };
 }
 
+export interface ApiCategoryCategory extends Schema.CollectionType {
+  collectionName: 'categories';
+  info: {
+    singularName: 'category';
+    pluralName: 'categories';
+    displayName: 'Category';
+    description: '';
+  };
+  options: {
+    draftAndPublish: true;
+  };
+  attributes: {
+    name: Attribute.String & Attribute.Required & Attribute.Unique;
+    icon: Attribute.Media<'images' | 'files' | 'videos' | 'audios'>;
+    doctors: Attribute.Relation<
+      'api::category.category',
+      'oneToMany',
+      'api::doctor.doctor'
+    >;
+    createdAt: Attribute.DateTime;
+    updatedAt: Attribute.DateTime;
+    publishedAt: Attribute.DateTime;
+    createdBy: Attribute.Relation<
+      'api::category.category',
+      'oneToOne',
+      'admin::user'
+    > &
+      Attribute.Private;
+    updatedBy: Attribute.Relation<
+      'api::category.category',
+      'oneToOne',
+      'admin::user'
+    > &
+      Attribute.Private;
+  };
+}
+
+export interface ApiDoctorDoctor extends Schema.CollectionType {
+  collectionName: 'doctors';
+  info: {
+    singularName: 'doctor';
+    pluralName: 'doctors';
+    displayName: 'Doctor';
+  };
+  options: {
+    draftAndPublish: true;
+  };
+  attributes: {
+    name: Attribute.String & Attribute.Required;
+    patients: Attribute.Integer & Attribute.DefaultTo<0>;
+    email: Attribute.Email & Attribute.Required;
+    phone: Attribute.String & Attribute.Required;
+    startTime: Attribute.Time & Attribute.Required;
+    endTime: Attribute.Time & Attribute.Required;
+    yearsExperience: Attribute.Integer &
+      Attribute.Required &
+      Attribute.DefaultTo<0>;
+    premium: Attribute.Boolean & Attribute.DefaultTo<false>;
+    avatar: Attribute.Media<'images'> & Attribute.Required;
+    about: Attribute.RichText & Attribute.Required;
+    category: Attribute.Relation<
+      'api::doctor.doctor',
+      'manyToOne',
+      'api::category.category'
+    >;
+    createdAt: Attribute.DateTime;
+    updatedAt: Attribute.DateTime;
+    publishedAt: Attribute.DateTime;
+    createdBy: Attribute.Relation<
+      'api::doctor.doctor',
+      'oneToOne',
+      'admin::user'
+    > &
+      Attribute.Private;
+    updatedBy: Attribute.Relation<
+      'api::doctor.doctor',
+      'oneToOne',
+      'admin::user'
+    > &
+      Attribute.Private;
+  };
+}
+
 export interface PluginUploadFile extends Schema.CollectionType {
   collectionName: 'files';
   info: {
@@ -788,89 +871,6 @@ export interface PluginUsersPermissionsUser extends Schema.CollectionType {
   };
 }
 
-export interface ApiCategoryCategory extends Schema.CollectionType {
-  collectionName: 'categories';
-  info: {
-    singularName: 'category';
-    pluralName: 'categories';
-    displayName: 'Category';
-    description: '';
-  };
-  options: {
-    draftAndPublish: true;
-  };
-  attributes: {
-    name: Attribute.String & Attribute.Required & Attribute.Unique;
-    icon: Attribute.Media<'images' | 'files' | 'videos' | 'audios'>;
-    doctors: Attribute.Relation<
-      'api::category.category',
-      'oneToMany',
-      'api::doctor.doctor'
-    >;
-    createdAt: Attribute.DateTime;
-    updatedAt: Attribute.DateTime;
-    publishedAt: Attribute.DateTime;
-    createdBy: Attribute.Relation<
-      'api::category.category',
-      'oneToOne',
-      'admin::user'
-    > &
-      Attribute.Private;
-    updatedBy: Attribute.Relation<
-      'api::category.category',
-      'oneToOne',
-      'admin::user'
-    > &
-      Attribute.Private;
-  };
-}
-
-export interface ApiDoctorDoctor extends Schema.CollectionType {
-  collectionName: 'doctors';
-  info: {
-    singularName: 'doctor';
-    pluralName: 'doctors';
-    displayName: 'Doctor';
-  };
-  options: {
-    draftAndPublish: true;
-  };
-  attributes: {
-    name: Attribute.String & Attribute.Required;
-    patients: Attribute.Integer & Attribute.DefaultTo<0>;
-    email: Attribute.Email & Attribute.Required;
-    phone: Attribute.String & Attribute.Required;
-    startTime: Attribute.Time & Attribute.Required;
-    endTime: Attribute.Time & Attribute.Required;
-    yearsExperience: Attribute.Integer &
-      Attribute.Required &
-      Attribute.DefaultTo<0>;
-    premium: Attribute.Boolean & Attribute.DefaultTo<false>;
-    avatar: Attribute.Media<'images'> & Attribute.Required;
-    about: Attribute.RichText & Attribute.Required;
-    category: Attribute.Relation<
-      'api::doctor.doctor',
-      'manyToOne',
-      'api::category.category'
-    >;
-    createdAt: Attribute.DateTime;
-    updatedAt: Attribute.DateTime;
-    publishedAt: Attribute.DateTime;
-    createdBy: Attribute.Relation<
-      'api::doctor.doctor',
-      'oneToOne',
-      'admin::user'
-    > &
-      Attribute.Private;
-    updatedBy: Attribute.Relation<
-      'api::doctor.doctor',
-      'oneToOne',
-      'admin::user'
-    > &
-      Attribute.Private;
-  };
-}
-
 declare module '@strapi/types' {
   export module Shared {
     export interface ContentTypes {
@@ -881,6 +881,8 @@ declare module '@strapi/types' {
       'admin::api-token-permission': AdminApiTokenPermission;
       'admin::transfer-token': AdminTransferToken;
       'admin::transfer-token-permission': AdminTransferTokenPermission;
+      'api::category.category': ApiCategoryCategory;
+      'api::doctor.doctor': ApiDoctorDoctor;
       'plugin::upload.file': PluginUploadFile;
       'plugin::upload.folder': PluginUploadFolder;
       'plugin::content-releases.release': PluginContentReleasesRelease;
@@ -889,8 +891,6 @@ declare module '@strapi/types' {
       'plugin::users-permissions.permission': PluginUsersPermissionsPermission;
       'plugin::users-permissions.role': PluginUsersPermissionsRole;
       'plugin::users-permissions.user': PluginUsersPermissionsUser;
-      'api::category.category': ApiCategoryCategory;
-      'api::doctor.doctor': ApiDoctorDoctor;
     }
   }
 }
